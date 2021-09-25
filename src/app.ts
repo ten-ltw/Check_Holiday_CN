@@ -169,6 +169,7 @@ scheduleCronstyle();
  */
 import express from "express";
 const app = express();
+app.use(express.static('public'));
 
 /**
  * get method to check the date is a holiday
@@ -184,28 +185,15 @@ app.get("/", async (req, res) => {
   if (!date) return res.send("Empty param!");
   if (!reg.exec(date)) return res.send("Wrong param!");
 
-  const year = new Date().getFullYear().toString();
-  const specialDatesJson = await fs.readFileSync(year + ".json");
-  const specialDates: SpecialDate = JSON.parse(
-    specialDatesJson.toString("utf-8")
-  );
-  let state = 0;
+  const state = await caculateState(date);
+  return res.send(JSON.stringify({ date, state }));
+});
 
-  if (specialDates.workingdayHoliday.some((specialDate) => specialDate === date)) {
-    // 2: holiday
-    state = 2;
-    return res.send(JSON.stringify({ date, state }));
-  } else if (specialDates.weekendWoringday.some((specialDate) => specialDate === date)) {
-    // 0: work day
-    return res.send(JSON.stringify({ date, state }));
-  } else {
-    const day = new Date(date).getDay();
-    if (day === 0 || day === 6) {
-      // 1: weekend
-      state = 1;
-    }
-    return res.send(JSON.stringify({ date, state }));
-  }
+app.get("/today", async (req, res) => {
+  const date = timeToDaterSting(new Date());
+
+  const state = await caculateState(date);
+  return res.send(JSON.stringify({ date, state }));
 });
 
 // Listen to the App Engine-specified port, or 8080 otherwise
@@ -213,3 +201,29 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
+
+async function caculateState(date: string): Promise<number> {
+  const year = new Date(date).getFullYear().toString();
+  // TODO: If we don't have made the file before, we should do it again
+  const specialDatesJson = await fs.readFileSync(year + ".json");
+  const specialDates: SpecialDate = JSON.parse(
+    specialDatesJson.toString("utf-8")
+  );
+
+  let state = 0;
+  if (specialDates.workingdayHoliday.some((specialDate) => specialDate === date)) {
+    // 2: holiday
+    state = 2;
+    return state;
+  } else if (specialDates.weekendWoringday.some((specialDate) => specialDate === date)) {
+    // 0: work day
+    return state;
+  } else {
+    const day = new Date(date).getDay();
+    if (day === 0 || day === 6) {
+      // 1: weekend
+      state = 1;
+    }
+    return state;
+  }
+}
