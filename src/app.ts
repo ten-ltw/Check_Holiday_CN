@@ -178,7 +178,7 @@ app.use(express.static('public'));
  *   - 1: weekend
  *   - 2: holiday
  */
-app.get("/", async (req, res) => {
+app.get("/check", async (req, res) => {
   const reg = /^\d{4}\/\d{2}\/\d{2}/;
   const date = req.query.date?.toString();
 
