@@ -132,5 +132,8 @@ export function timeToDateString(time: Date): string {
     time.getDate().toString().length > 1
       ? time.getDate().toString()
       : "0" + time.getDate().toString();
-  return year + slash + month + slash + date;
+  const result = year + slash + month + slash + date;
+  console.log('original time:', time);
+  console.log('parse date:', result);
+  return result;
 }
