@@ -1,9 +1,5 @@
-/**
- * Save sepcial dates about this years from
- * https://fangjia.bmcx.com/
- */
 import fs from "fs";
-import { HolidayHelper, SpecialDate, timeToDateString } from "./holiday_helper"
+import { HolidayHelper, SpecialDate } from "./holiday_helper"
 
 /**
  * Get new special date automation
@@ -52,12 +48,12 @@ app.get("/check", async (req, res) => {
   if (!date) return res.send("Empty param!");
   if (!reg.exec(date)) return res.send("Wrong param!");
 
-  const state = await caculateState(date);
+  const state = await caculateState(new Date(date));
   return res.send(JSON.stringify({ date, state }));
 });
 
 app.get("/today", async (req, res) => {
-  const date = timeToDateString(new Date());
+  const date = new Date();
 
   const state = await caculateState(date);
   return res.send(JSON.stringify({ date, state }));
@@ -69,8 +65,10 @@ app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
 
-async function caculateState(date: string): Promise<number> {
-  const year = new Date(date).getFullYear().toString();
+async function caculateState(date: Date): Promise<number> {
+  console.log('======== compared local date:', date.toLocaleDateString(), ' ========')
+  console.log('======== compared local time:', date.toLocaleTimeString(), ' ========')
+  const year = date.getFullYear().toString();
   // TODO: If we don't have made the file before, we should do it again
   const specialDatesJson = await fs.readFileSync(year + ".json");
   const specialDates: SpecialDate = JSON.parse(
@@ -78,11 +76,11 @@ async function caculateState(date: string): Promise<number> {
   );
 
   let state = 0;
-  if (specialDates.workingdayHoliday.some((specialDate) => specialDate === date)) {
+  if (specialDates.workingdayHoliday.some((specialDate) => specialDate === date.toLocaleDateString())) {
     // 2: holiday
     state = 2;
     return state;
-  } else if (specialDates.weekendWoringday.some((specialDate) => specialDate === date)) {
+  } else if (specialDates.weekendWoringday.some((specialDate) => specialDate === date.toLocaleDateString())) {
     // 0: work day
     return state;
   } else {
