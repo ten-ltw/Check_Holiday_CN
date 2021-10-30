@@ -1,6 +1,6 @@
 import fs from "fs";
 import cheerio from "cheerio";
-import request, { Response } from "request";
+import { get, Response } from "request";
 
 // Make our call as a browser call
 const headers = {
@@ -34,7 +34,7 @@ export class HolidayHelper {
 
   private async callWebSite(): Promise<Buffer> {
     return await new Promise((resolve, reject) => {
-      request(this.seedURL, options, (err: unknown, response: Response) => {
+      get(this.seedURL, options, (err: unknown, response: Response) => {
         if (err) {
           reject(err);
         } else {
