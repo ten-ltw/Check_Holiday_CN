@@ -3,7 +3,7 @@
  * https://fangjia.bmcx.com/
  */
 import fs from "fs";
-import { HolidayHelper, SpecialDate, timeToDaterSting } from "./holiday_helper"
+import { HolidayHelper, SpecialDate, timeToDateString } from "./holiday_helper"
 
 /**
  * Get new special date automation
@@ -57,7 +57,7 @@ app.get("/check", async (req, res) => {
 });
 
 app.get("/today", async (req, res) => {
-  const date = timeToDaterSting(new Date());
+  const date = timeToDateString(new Date());
 
   const state = await caculateState(date);
   return res.send(JSON.stringify({ date, state }));

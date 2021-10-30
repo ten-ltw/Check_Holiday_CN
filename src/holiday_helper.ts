@@ -73,12 +73,12 @@ export class HolidayHelper {
         const timeFrom = new Date(this.year + "/" + workingdayHolidayFrom);
         const timeTo = new Date(this.year + "/" + workingdayHolidayTo);
         specialDate.workingdayHoliday.push(
-          timeToDaterSting(timeFrom),
-          timeToDaterSting(timeTo)
+          timeToDateString(timeFrom),
+          timeToDateString(timeTo)
         );
         let nextDay = new Date(timeFrom.setDate(timeFrom.getDate() + 1));
-        while (timeToDaterSting(nextDay) !== timeToDaterSting(timeTo)) {
-          specialDate.workingdayHoliday.push(timeToDaterSting(nextDay));
+        while (timeToDateString(nextDay) !== timeToDateString(timeTo)) {
+          specialDate.workingdayHoliday.push(timeToDateString(nextDay));
           nextDay = new Date(nextDay.setDate(nextDay.getDate() + 1));
         }
 
@@ -99,7 +99,7 @@ export class HolidayHelper {
           const weekendWorkingDays = weekendWorking?.split("、");
           weekendWorkingDays?.forEach((dateWithoutYear) => {
             const time = new Date(this.year + "/" + dateWithoutYear);
-            specialDate.weekendWoringday.push(timeToDaterSting(time));
+            specialDate.weekendWoringday.push(timeToDateString(time));
           });
         }
       }
@@ -119,9 +119,9 @@ export class HolidayHelper {
 export type SpecialDate = {
   workingdayHoliday: string[];
   weekendWoringday: string[];
-};
+}
 
-export function timeToDaterSting(time: Date): string {
+export function timeToDateString(time: Date): string {
   const slash = "/";
   const year = time.getFullYear().toString();
   const month =
