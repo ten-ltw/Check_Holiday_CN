@@ -4,18 +4,17 @@
  */
 import fs from "fs";
 import cheerio from "cheerio";
-import { get, Response } from "request";
+import * as https from "https";
 
 // Make our call as a browser call
 const headers = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36",
 };
-const options = {
+const options: https.RequestOptions = {
   headers,
   timeout: 10000,
 };
-
 export class HolidayHelper {
   private year = new Date().getFullYear().toString();
   private get seedURL(): string {
@@ -36,14 +35,17 @@ export class HolidayHelper {
     }
   }
 
-  private async callWebSite(): Promise<Buffer> {
-    return await new Promise((resolve, reject) => {
-      get(this.seedURL, options, (err: unknown, response: Response) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(response.body);
-        }
+  private callWebSite(): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      https.get(this.seedURL, options, (response) => {
+
+        // called when a data chunk is received.
+        response.on('data', (chunk) => {
+          resolve(chunk);
+        });
+
+      }).on("error", (err) => {
+        reject(err);
       });
     });
   }

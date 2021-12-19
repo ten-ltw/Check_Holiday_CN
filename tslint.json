@@ -26,7 +26,8 @@
     "comment-format": [true, "check-space"],
     "no-var-keyword": true,
     "no-console": false,
-    "no-any": true
+    "no-any": true,
+    "quotemark": false
   },
   "rulesDirectory": []
 }
