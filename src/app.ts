@@ -31,7 +31,7 @@ app.get('/weather', async (_req, res) => {
 
   // const msg = await service.weather.getWeatherNow();
 
-  return res.send(JSON.stringify({ payload: '写不出来，啥也别穿了！' }));
+  return res.send('写不出来，啥也别穿了！');
 });
 
 // Listen to the App Engine-specified port, or 8080 otherwise
