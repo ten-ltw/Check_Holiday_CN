@@ -10,13 +10,12 @@ export class WeatherService {
       let weather24H: Weather[];
       Promise.all([getNowData(loaction), get24HData(loaction)]).then((response: any[]) => {
         try {
-
           weatherNow = response?.[0]?.data?.now;
           weather24H = response?.[1]?.data?.hourly;
           console.log(JSON.stringify(weatherNow), JSON.stringify(weather24H));
           resolve(this.makeATextForTTS(weatherNow, weather24H));
         } catch {
-          throw new Error(JSON.stringify(weatherNow));
+          reject(JSON.stringify(weatherNow));
         }
       })
     });
