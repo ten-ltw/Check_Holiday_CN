@@ -6,22 +6,19 @@ export class WeatherService {
   public async getWeatherNow(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const loaction = '121.64,38.92';
-      let weatherNow: Weather;
-      let weather24H: Weather[];
-      Promise.all([getNowData(loaction), get24HData(loaction)]).then((response: any[]) => {
+      console.log(process.env.HE_FENG_KEY);
+      getNowData(loaction).then((response) => {
+        const weatherNow: Weather = response.data.now;
         try {
-          weatherNow = response?.[0]?.data?.now;
-          weather24H = response?.[1]?.data?.hourly;
-          console.log(JSON.stringify(weatherNow), JSON.stringify(weather24H));
-          resolve(this.makeATextForTTS(weatherNow, weather24H));
-        } catch {
-          reject(JSON.stringify(weatherNow));
+          resolve(this.makeATextForTTS(weatherNow));
+        } catch (error) {
+          reject({ error, weatherNow });
         }
       })
     });
   }
 
-  private makeATextForTTS(now: Weather, hours: Weather[]) {
+  private makeATextForTTS(now: Weather, hours?: Weather[]) {
     // 一小时内是否需要带伞
     if (now.feelsLike && now.feelsLike < 4) return '需要穿羽绒服！';
     return '穿个毛线。';
