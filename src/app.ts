@@ -4,8 +4,6 @@ import { Service } from './service';
 
 const service = new Service();
 
-service.weather.getWeatherNow();
-
 const app = express();
 app.use(express.static('public'));
 
