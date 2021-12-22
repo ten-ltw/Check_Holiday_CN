@@ -5,12 +5,19 @@ import { Weather } from '../datamodel';
 export class WeatherService {
   public async getWeatherNow(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      const loaction = '121.64,38.92'
+      const loaction = '121.64,38.92';
+      let weatherNow: Weather;
+      let weather24H: Weather[];
       Promise.all([getNowData(loaction), get24HData(loaction)]).then((response: any[]) => {
-        const weatherNow: Weather = response?.[0]?.data?.now;
-        const weather24H: Weather[] = response?.[1]?.data?.hourly;
-        console.log(JSON.stringify(weatherNow), JSON.stringify(weather24H));
-        resolve(this.makeATextForTTS(weatherNow, weather24H));
+        try {
+
+          weatherNow = response?.[0]?.data?.now;
+          weather24H = response?.[1]?.data?.hourly;
+          console.log(JSON.stringify(weatherNow), JSON.stringify(weather24H));
+          resolve(this.makeATextForTTS(weatherNow, weather24H));
+        } catch {
+          throw new Error(JSON.stringify(weatherNow));
+        }
       })
     });
   }
