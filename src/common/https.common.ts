@@ -1,4 +1,5 @@
 import { get } from 'https';
+import { brotliCompress } from 'zlib';
 
 export function asyncGetString(url: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
@@ -15,3 +16,19 @@ export function asyncGetString(url: string): Promise<string> {
     });
   })
 }
+
+export function asyncGetJson(url: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    get(url, { headers: { 'Content-Type': 'application/json' } }, (response) => {
+      response.on('data', (chunk) => {
+        brotliCompress(chunk, (error, compressedBuffer) => {
+          if (error) reject(error);
+          resolve(compressedBuffer.toString());
+        })
+      });
+    }).on('error', (error) => {
+      reject(error);
+    });
+  })
+}
+

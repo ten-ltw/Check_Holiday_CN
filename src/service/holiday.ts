@@ -7,7 +7,7 @@ import {
 import { asyncGetString } from '../common';
 import { SpecialDate } from '../datamodel';
 
-export class Holiday {
+export class HolidayService {
   private year = new Date().getFullYear().toString();
   private get seedURL(): string {
     return 'https://fangjia.bmcx.com/' + this.year + '__fangjia/';

@@ -1,8 +1,6 @@
 {
   "defaultSeverity": "error",
-  "extends": [
-    "tslint:recommended"
-  ],
+  "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
     "no-parameter-properties": false,
@@ -13,10 +11,7 @@
     "no-this-assignment": [
       true,
       {
-        "allowed-names": [
-          "^self$",
-          "^that$"
-        ],
+        "allowed-names": ["^self$", "^that$"],
         "allow-destructuring": true
       }
     ],
@@ -25,24 +20,15 @@
       "allow-declarations",
       "allow-named-functions"
     ],
-    "no-empty": [
-      false,
-      "allow-empty-catch"
-    ],
+    "no-empty": [false, "allow-empty-catch"],
     "no-unnecessary-type-assertion": false,
     "return-undefined": false,
     "no-for-in-array": false,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "no-var-keyword": true,
     "no-console": false,
-    "no-any": true,
-    "quotemark": [
-      true,
-      "single"
-    ]
+    "no-any": false,
+    "quotemark": [true, "single"]
   },
   "rulesDirectory": []
 }

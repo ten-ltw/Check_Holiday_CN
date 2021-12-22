@@ -1,14 +1,14 @@
 import { config } from 'dotenv';
 import { scheduleJob } from 'node-schedule';
 
-import { Holiday } from './holiday';
-import { Weather } from './weather';
+import { HolidayService } from './holiday';
+import { WeatherService } from './weather';
 
 export class Service {
 
   constructor (
-    public holiday = new Holiday(),
-    public weather = new Weather(),
+    public holiday = new HolidayService(),
+    public weather = new WeatherService(),
   ) {
     this.preInitialize();
   }

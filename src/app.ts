@@ -4,6 +4,8 @@ import { Service } from './service';
 
 const service = new Service();
 
+service.weather.getWeatherNow();
+
 const app = express();
 app.use(express.static('public'));
 
@@ -25,6 +27,13 @@ app.get('/today', async (_req, res) => {
   const state = await service.holiday.caculateState(date);
 
   return res.send(JSON.stringify({ date, state }));
+});
+
+app.get('/weather', async (_req, res) => {
+
+  const msg = await service.weather.getWeatherNow();
+
+  return res.send(JSON.stringify({ payload: msg }));
 });
 
 // Listen to the App Engine-specified port, or 8080 otherwise

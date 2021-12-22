@@ -1,53 +1,60 @@
-import { createHash } from 'crypto';
-import { get } from 'https';
+import axios from 'axios';
 
-export class Weather {
+import { Weather } from '../datamodel';
 
+export class WeatherService {
+  public async getWeatherNow(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      const loaction = '121.64,38.92'
+      Promise.all([getNowData(loaction), get24HData(loaction)]).then((response: any[]) => {
+        const weatherNow: Weather = response?.[0]?.data?.now;
+        const weather24H: Weather[] = response?.[1]?.data?.hourly;
+        resolve(this.makeATextForTTS(weatherNow, weather24H));
+      })
+    });
+  }
+
+  private makeATextForTTS(now: Weather, hours: Weather[]) {
+    // 一小时内是否需要带伞
+    if (now.feelsLike && now.feelsLike < 4) return '需要穿羽绒服！';
+    return '穿个毛线。';
+  }
 }
 
-export function getWeatherData() {
-  // https://devapi.qweather.com/v7/weather/24h?
-  const a = {
-    username: 'HE2112191027211539',
-    location: '38.92,121.64',
-  };
-  const params = 'sign=' + getSignature(a, process.env.HE_FENG_KEY);
-  get('https://devapi.qweather.com/v7/weather/now?' + params, (response) => {
-    let body = '';
 
-    response.on('data', function (chunk) {
-      body += chunk;
-    });
-
-    response.on('end', function () {
-      return body;
-    });
+export function getNowData(pos: string) {
+  return request({
+    url: '/now',
+    params: {
+      location: pos
+    }
   })
 }
 
-function getSignature(parameterObject: any, privateKey?: string) {
-  const keys = [];
-  for (let k in parameterObject) {
-    if (k !== 'key' && k !== 'sign' && !/^\s+$/.test(k) && !/^\s+$/.test(parameterObject[k])) {
-      keys.push(k);
+export function get24HData(pos: string) {
+  return request({
+    url: '/24h',
+    params: {
+      location: pos
     }
-  }
-
-  keys.sort();
-
-  let str = '';
-  for (let i in keys) {
-    let k = keys[i];
-    if (!/\s+/.test(parameterObject[k])) {
-      str += k + '=' + parameterObject[k] + '&';
-    }
-  }
-  str = str.substr(0, str.length - 1) + privateKey;
-  return md5(str);
+  })
 }
 
-function md5(data: any) {
-  // 以md5的格式创建一个哈希值
-  let hash: any = createHash('md5');
-  return hash.update(data).digest('base64');
+function request(config: any) {
+
+  const instance = axios.create({
+    baseURL: 'https://devapi.qweather.com/v7/weather',
+    timeout: 5000
+  });
+
+  instance.interceptors.request.use(
+    (config: any) => {
+      config.params.key = process.env.HE_FENG_KEY;
+      return config
+    },
+    (err: unknown) => { console.log(err) }
+  )
+
+
+  return instance(config);
 }
