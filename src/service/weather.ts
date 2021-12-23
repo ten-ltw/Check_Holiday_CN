@@ -18,6 +18,8 @@ export class WeatherService {
     if (!now.feelsLike) {
       return '代码有问题，请检查！';
     }
+
+    const temperature = now.temp < 0 ? `零下${Math.abs(now.temp)}摄氏度` : Math.abs(now.temp) + `摄氏度`;
     const feelsLike = now.feelsLike < 0 ? `零下${Math.abs(now.feelsLike)}` : Math.abs(now.feelsLike);
 
     let wear;
@@ -53,7 +55,7 @@ export class WeatherService {
       rain = `未来一小时有雨。`
     }
 
-    return `${now.text}。体感温度${feelsLike}摄氏度。${wear}${wind}${rain}`;
+    return `${now.text}。${temperature}体感温度${feelsLike}摄氏度。${wear}${wind}${rain}`;
   }
 }
 

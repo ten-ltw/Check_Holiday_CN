@@ -3,6 +3,7 @@ export interface Weather {
    * 预报时间 预报有
    */
   fxTime?: Date;
+  temp: number;
   /**
    * 体感 即时有
    */
