@@ -34,8 +34,23 @@ export class WeatherService {
     const wind = now.feelsLike < 8 && now.windSpeed > 3 ? `风较大，穿防风衣裤。` : ``;
 
     let rain = '';
-    if (hours[0].pop && hours[0].pop > 0) {
-      rain = `未来一小时降水概率${hours[0].pop}%。`
+    if (hours[0].pop && hours[0].pop === 0) {
+      rain = `未来一小时没有雨。`
+    }
+    if (hours[0].pop && hours[0].pop !== 0 && hours[0].pop <= 30) {
+      rain = `未来一小时降水概率${hours[0].pop}%，降雨概率较小。`
+    }
+    if (hours[0].pop && hours[0].pop > 30 && hours[0].pop < 60) {
+      rain = `未来一小时降水概率${hours[0].pop}%，可能降雨。`
+    }
+    if (hours[0].pop && hours[0].pop >= 60 && hours[0].pop < 75) {
+      rain = `未来一小时降水概率${hours[0].pop}%，降雨概率较大。`
+    }
+    if (hours[0].pop && hours[0].pop >= 75 && hours[0].pop !== 100) {
+      rain = `未来一小时降水概率${hours[0].pop}%，降雨可能性很大。`
+    }
+    if (hours[0].pop && hours[0].pop === 100) {
+      rain = `未来一小时有雨。`
     }
 
     return `${now.text}。体感温度${feelsLike}摄氏度。${wear}${wind}${rain}`;
