@@ -6,7 +6,6 @@ export class WeatherService {
   public async getWeatherNow(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const loaction = '121.64,38.92';
-      console.log(process.env.HE_FENG_KEY);
       getNowData(loaction).then((response) => {
         const weatherNow: Weather = response.data.now;
         try {
@@ -53,7 +52,7 @@ function request(config: any) {
 
   instance.interceptors.request.use(
     (config: any) => {
-      config.params.key = process.env.HE_FENG_KEY;
+      config.params.key = '3dff758bce7348479ca4cb8a5687f24b';
       return config
     },
     (err: unknown) => { console.log(err) }

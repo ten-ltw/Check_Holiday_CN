@@ -29,9 +29,9 @@ app.get('/today', async (_req, res) => {
 
 app.get('/weather', async (_req, res) => {
 
-  // const msg = await service.weather.getWeatherNow();
+  const msg = await service.weather.getWeatherNow();
 
-  return res.send({ msg: '写不出来，啥也别穿了！' });
+  return res.send({ msg });
 });
 
 // Listen to the App Engine-specified port, or 8080 otherwise
