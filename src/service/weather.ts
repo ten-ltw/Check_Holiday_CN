@@ -4,23 +4,41 @@ import { Weather } from '../datamodel';
 
 export class WeatherService {
   public async getWeatherNow(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       const loaction = '121.64,38.92';
-      getNowData(loaction).then((response) => {
-        const weatherNow: Weather = response.data.now;
-        try {
-          resolve(this.makeATextForTTS(weatherNow));
-        } catch (error) {
-          reject({ error, weatherNow });
-        }
+      Promise.all([getNowData(loaction), get24HData(loaction)]).then((args) => {
+        const weatherNow: Weather = args[0].data.now;
+        const weather24H: Weather[] = args[1].data.hourly;
+        resolve(this.makeATextForTTS(weatherNow, weather24H));
       })
     });
   }
 
-  private makeATextForTTS(now: Weather, hours?: Weather[]) {
-    // 一小时内是否需要带伞
-    if (now.feelsLike && now.feelsLike < 4) return '需要穿羽绒服！';
-    return '穿个毛线。';
+  private makeATextForTTS(now: Weather, hours: Weather[]) {
+    if (!now.feelsLike) {
+      return '代码有问题，请检查！';
+    }
+    const feelsLike = now.feelsLike < 0 ? `零下${Math.abs(now.feelsLike)}` : Math.abs(now.feelsLike);
+
+    let wear;
+    if (now.feelsLike >= 4 && now.feelsLike < 10) {
+      wear = `穿秋裤，毛呢或薄羽绒服。`;
+    }
+    if (now.feelsLike < 4) {
+      wear = `穿厚打底裤，中等羽绒服。`;
+    }
+    if (now.feelsLike < -4) {
+      wear = `穿最厚的衣裤。`;
+    }
+
+    const wind = now.feelsLike < 8 && now.windSpeed > 3 ? `风较大，穿防风衣裤。` : ``;
+
+    let rain = '';
+    if (hours[0].pop && hours[0].pop > 0) {
+      rain = `未来一小时降水概率${hours[0].pop}%。`
+    }
+
+    return `${now.text}。体感温度${feelsLike}摄氏度。${wear}${wind}${rain}`;
   }
 }
 
