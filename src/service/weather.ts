@@ -52,7 +52,7 @@ function request(config: any) {
 
   instance.interceptors.request.use(
     (config: any) => {
-      config.params.key = '3dff758bce7348479ca4cb8a5687f24b';
+      config.params.key = process.env.HE_FENG_KEY;
       return config
     },
     (err: unknown) => { console.log(err) }
